@@ -1,0 +1,1 @@
+type PagesConfig = Array<Record<string, any>>; export default PagesConfig;
