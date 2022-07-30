@@ -9,7 +9,6 @@ import traverse, {
 import build from "@babel/generator";
 import fs from "fs/promises";
 import glob from "glob";
-import path from "path";
 
 const traverseReferenced = (
 	program: NodePath<t.Program>,
@@ -175,25 +174,6 @@ export async function getPagesConfig() {
 			}
 		},
 	});
-	
-	const pkg = JSON.stringify({
-		name:  ".next-pages-config",
-		main: 'index.js',
-		types: "index.d.ts",
-	})
 
-	const dir = path.resolve(__dirname, '../', ".next-pages-config")
-	console.log(dir);
-	
-	
-	await fs.mkdir(dir, { recursive: true})
-	await fs.writeFile(path.join(dir, 'index.js'), build(program).code, {encoding: 'utf-8'})
-	await fs.writeFile(path.join(dir, 'index.d.ts'), 'type PagesConfig = Array<Record<string, any>>; export default PagesConfig;', {encoding: 'utf-8'})
-	await fs.writeFile(path.join(dir, 'package.json'), pkg, {encoding: 'utf-8'})
-}
-
-getPagesConfig()
-
-declare module "next-pages-config" {
-	interface Config {}
+	return build(program)
 }

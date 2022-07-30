@@ -14,23 +14,25 @@
 		"@types/babel__traverse": "^7.17.1",
 		"@types/glob": "^7.2.0",
 		"@types/node": "^18.6.2",
-		"esbuild": "^0.14.51",
-		"rollup": "^2.77.2",
-		"rollup-plugin-dts": "^4.2.2",
-		"rollup-plugin-esbuild": "^4.9.1",
+		"tsup": "^6.2.0",
 		"tsx": "^3.8.0",
 		"typescript": "^4.7.4"
 	},
+	"bin": "./dist/generate.js",
 	"main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "typesVersions": {
-        "*": {
-          "dist/index.d.ts": [ "dist/index.d.ts" ],
-          "*": [ "dist/*" ]
-        }
-      },
-    "exports": {
-        ".": "./dist/index.js",
-        "./": "./dist/"
-    }
+	"types": "./dist/index.d.ts",
+	"typesVersions": {
+		"*": {
+			"dist/index.d.ts": [
+				"dist/index.d.ts"
+			],
+			"*": [
+				"dist/*"
+			]
+		}
+	},
+	"exports": {
+		".": "./dist/index.js",
+		"./data": "./dist/data.js"
+	}
 }

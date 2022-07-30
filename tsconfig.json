@@ -12,7 +12,7 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "eslint-pages-config": ["./src/index.js"]
+      "next-pages-config": ["./src/index.ts"]
     }
   },
   "include": ["**/*.ts"]
