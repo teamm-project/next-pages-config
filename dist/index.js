@@ -1,10 +1,40 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
 // src/index.ts
-import { parse } from "@babel/parser";
-import * as t from "@babel/types";
-import traverse from "@babel/traverse";
-import build from "@babel/generator";
-import fs from "fs/promises";
-import glob from "glob";
+var src_exports = {};
+__export(src_exports, {
+  getPagesConfig: () => getPagesConfig
+});
+module.exports = __toCommonJS(src_exports);
+var import_parser = require("@babel/parser");
+var t = __toESM(require("@babel/types"));
+var import_traverse = __toESM(require("@babel/traverse"));
+var import_generator = __toESM(require("@babel/generator"));
+var import_promises = __toESM(require("fs/promises"));
+var import_glob = __toESM(require("glob"));
 var traverseReferenced = (program2, declarations) => {
   const define = (binding) => {
     const declaration = binding.path;
@@ -83,13 +113,13 @@ var pageVisitor = (pagePath, program2, configs) => ({
 });
 async function getPagesConfig() {
   const pages = await Promise.all(
-    glob.sync("./pages/**/!(_)*.tsx").map(async (path) => {
-      const code = await fs.readFile(path, {
+    import_glob.default.sync("./pages/**/!(_)*.tsx").map(async (path) => {
+      const code = await import_promises.default.readFile(path, {
         encoding: "utf-8"
       });
       return {
         path,
-        ast: parse(code, {
+        ast: (0, import_parser.parse)(code, {
           sourceType: "module",
           plugins: ["jsx", "typescript"]
         })
@@ -97,7 +127,7 @@ async function getPagesConfig() {
     })
   );
   const program2 = t.program([]);
-  traverse(t.file(program2), {
+  (0, import_traverse.default)(t.file(program2), {
     Program(path) {
       const configId = path.scope.generateUidIdentifier();
       path.pushContainer("body", [
@@ -111,12 +141,13 @@ async function getPagesConfig() {
         "declarations.0.init"
       );
       for (const page of pages) {
-        traverse(page.ast, pageVisitor(page.path, path, configsArray));
+        (0, import_traverse.default)(page.ast, pageVisitor(page.path, path, configsArray));
       }
     }
   });
-  return build(program2);
+  return (0, import_generator.default)(program2);
 }
-export {
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
   getPagesConfig
-};
+});

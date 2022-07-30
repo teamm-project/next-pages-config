@@ -1,13 +1,33 @@
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+
 // src/generate.ts
-import fs2 from "fs/promises";
+var import_promises2 = __toESM(require("fs/promises"));
 
 // src/index.ts
-import { parse } from "@babel/parser";
-import * as t from "@babel/types";
-import traverse from "@babel/traverse";
-import build from "@babel/generator";
-import fs from "fs/promises";
-import glob from "glob";
+var import_parser = require("@babel/parser");
+var t = __toESM(require("@babel/types"));
+var import_traverse = __toESM(require("@babel/traverse"));
+var import_generator = __toESM(require("@babel/generator"));
+var import_promises = __toESM(require("fs/promises"));
+var import_glob = __toESM(require("glob"));
 var traverseReferenced = (program2, declarations) => {
   const define = (binding) => {
     const declaration = binding.path;
@@ -86,13 +106,13 @@ var pageVisitor = (pagePath, program2, configs) => ({
 });
 async function getPagesConfig() {
   const pages = await Promise.all(
-    glob.sync("./pages/**/!(_)*.tsx").map(async (path2) => {
-      const code = await fs.readFile(path2, {
+    import_glob.default.sync("./pages/**/!(_)*.tsx").map(async (path2) => {
+      const code = await import_promises.default.readFile(path2, {
         encoding: "utf-8"
       });
       return {
         path: path2,
-        ast: parse(code, {
+        ast: (0, import_parser.parse)(code, {
           sourceType: "module",
           plugins: ["jsx", "typescript"]
         })
@@ -100,7 +120,7 @@ async function getPagesConfig() {
     })
   );
   const program2 = t.program([]);
-  traverse(t.file(program2), {
+  (0, import_traverse.default)(t.file(program2), {
     Program(path2) {
       const configId = path2.scope.generateUidIdentifier();
       path2.pushContainer("body", [
@@ -114,19 +134,24 @@ async function getPagesConfig() {
         "declarations.0.init"
       );
       for (const page of pages) {
-        traverse(page.ast, pageVisitor(page.path, path2, configsArray));
+        (0, import_traverse.default)(page.ast, pageVisitor(page.path, path2, configsArray));
       }
     }
   });
-  return build(program2);
+  return (0, import_generator.default)(program2);
 }
 
 // src/generate.ts
-import path from "path";
+var import_path = __toESM(require("path"));
+var import_core = require("@babel/core");
+var import_plugin_transform_modules_commonjs = __toESM(require("@babel/plugin-transform-modules-commonjs"));
 async function generate() {
   const { code } = await getPagesConfig();
-  const dir = path.resolve(__dirname, "../", ".generate");
-  await fs2.mkdir(dir, { recursive: true });
-  await fs2.writeFile(path.join(dir, "data.js"), code, { encoding: "utf-8" });
+  const dir = import_path.default.resolve(__dirname, "../", ".generate");
+  const cjs = (0, import_core.transform)(code, {
+    plugins: [import_plugin_transform_modules_commonjs.default]
+  });
+  await import_promises2.default.mkdir(dir, { recursive: true });
+  await import_promises2.default.writeFile(import_path.default.join(dir, "data.js"), (cjs == null ? void 0 : cjs.code) || "", { encoding: "utf-8" });
 }
 generate();
