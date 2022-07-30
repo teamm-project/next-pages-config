@@ -8,13 +8,19 @@ import preset from '@babel/preset-react'
 
 async function generate() {
     const { code } = await getPagesConfig()
-	const dir = path.resolve(__dirname, '../', '.generate')
 	const js = transform(code, {
 		presets: [preset]
 	})
 
-	await fs.mkdir(dir, { recursive: true })
-	await fs.writeFile(path.join(dir, 'data.mjs'), js?.code as string, {encoding: 'utf-8'})
+	const dirs = [
+		path.resolve(__dirname, '../', '.generate'),
+		path.resolve(__dirname, '../', 'node_modules', 'next-pages-config', '.generate')
+	]
+
+	for (const dir of dirs) {
+		await fs.mkdir(dir, { recursive: true })
+		await fs.writeFile(path.join(dir, 'data.mjs'), js?.code as string, {encoding: 'utf-8'})
+	}
 }
 
 generate()
