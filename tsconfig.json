@@ -10,7 +10,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "eslint-pages-config": ["./src/index.js"]
+    }
   },
   "include": ["**/*.ts"]
 }

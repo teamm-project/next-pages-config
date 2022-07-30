@@ -194,6 +194,6 @@ export async function getPagesConfig() {
 
 getPagesConfig()
 
-import config from '.next-pages-config'
-export default config
-
+declare module "next-pages-config" {
+	interface Config {}
+}
