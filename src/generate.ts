@@ -14,7 +14,7 @@ async function generate() {
 	})
 
 	await fs.mkdir(dir, { recursive: true })
-	await fs.writeFile(path.join(dir, 'data.js'), js?.code as string, {encoding: 'utf-8'})
+	await fs.writeFile(path.join(dir, 'data.mjs'), js?.code as string, {encoding: 'utf-8'})
 }
 
 generate()

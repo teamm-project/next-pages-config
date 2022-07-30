@@ -1588,11 +1588,11 @@ var import_core = require("@babel/core");
 var import_preset_react = __toESM(require_lib9());
 async function generate() {
   const { code } = await getPagesConfig();
-  const dir = import_path.default.resolve(__dirname, "../", ".generate");
+  const dir = import_path.default.resolve(__dirname, "..", "node_modules", "next-pages-config", ".generate");
   const js = (0, import_core.transform)(code, {
     presets: [import_preset_react.default]
   });
   await import_promises2.default.mkdir(dir, { recursive: true });
-  await import_promises2.default.writeFile(import_path.default.join(dir, "data.js"), js == null ? void 0 : js.code, { encoding: "utf-8" });
+  await import_promises2.default.writeFile(import_path.default.join(dir, "data.mjs"), js == null ? void 0 : js.code, { encoding: "utf-8" });
 }
 generate();

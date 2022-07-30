@@ -1,5 +1,5 @@
-import config from '../.generate/data';
-export { default } from '../.generate/data';
+import config from '../.generate/data.mjs';
+export { default } from '../.generate/data.mjs';
 
 interface Config {
 }

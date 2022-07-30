@@ -7,7 +7,7 @@ export default defineConfig([
     },
     {
         entry: ['src/data.ts'],
-        external: ['../.generate/data'],
+        external: ['../.generate/data.mjs'],
         dts: true,
         format: 'esm',
     }
