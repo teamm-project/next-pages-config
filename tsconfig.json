@@ -15,5 +15,7 @@
       "next-pages-config": ["./src/index.ts"]
     }
   },
+  "declarationMap": true,
+  "declaration": true,
   "include": ["**/*.ts"]
 }

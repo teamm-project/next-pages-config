@@ -1,4 +1,9 @@
 {
+	"author": {
+		"email": "lapacz.kornel@gmail.com",
+		"name": "Korneliusz Łapacz",
+		"url": "https://klapacz.dev"
+	},
 	"name": "next-pages-config",
 	"license": "MIT",
 	"dependencies": {
