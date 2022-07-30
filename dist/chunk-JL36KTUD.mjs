@@ -1,33 +1,10 @@
-"use strict";
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-
-// src/generate.ts
-var import_promises2 = __toESM(require("fs/promises"));
-
 // src/index.ts
-var import_parser = require("@babel/parser");
-var t = __toESM(require("@babel/types"));
-var import_traverse = __toESM(require("@babel/traverse"));
-var import_generator = __toESM(require("@babel/generator"));
-var import_promises = __toESM(require("fs/promises"));
-var import_glob = __toESM(require("glob"));
+import { parse } from "@babel/parser";
+import * as t from "@babel/types";
+import traverse from "@babel/traverse";
+import build from "@babel/generator";
+import fs from "fs/promises";
+import glob from "glob";
 var traverseReferenced = (program2, declarations) => {
   const define = (binding) => {
     const declaration = binding.path;
@@ -73,13 +50,13 @@ var traverseReferenced = (program2, declarations) => {
   };
 };
 var pageVisitor = (pagePath, program2, configs) => ({
-  ExportDefaultDeclaration(path2) {
+  ExportDefaultDeclaration(path) {
     var _a;
-    const declaration = path2.node.declaration;
+    const declaration = path.node.declaration;
     if (!t.isIdentifier(declaration)) {
       return;
     }
-    const binding = path2.scope.getBinding(declaration.name);
+    const binding = path.scope.getBinding(declaration.name);
     if (!binding) {
       return;
     }
@@ -101,18 +78,18 @@ var pageVisitor = (pagePath, program2, configs) => ({
       configPath.addComment("leading", ` ${pagePath} config `);
       configs.pushContainer("elements", configPath.node);
     }
-    path2.stop();
+    path.stop();
   }
 });
 async function getPagesConfig() {
   const pages = await Promise.all(
-    import_glob.default.sync("./pages/**/!(_)*.tsx").map(async (path2) => {
-      const code = await import_promises.default.readFile(path2, {
+    glob.sync("./pages/**/!(_)*.tsx").map(async (path) => {
+      const code = await fs.readFile(path, {
         encoding: "utf-8"
       });
       return {
-        path: path2,
-        ast: (0, import_parser.parse)(code, {
+        path,
+        ast: parse(code, {
           sourceType: "module",
           plugins: ["jsx", "typescript"]
         })
@@ -120,33 +97,27 @@ async function getPagesConfig() {
     })
   );
   const program2 = t.program([]);
-  (0, import_traverse.default)(t.file(program2), {
-    Program(path2) {
-      const configId = path2.scope.generateUidIdentifier();
-      path2.pushContainer("body", [
+  traverse(t.file(program2), {
+    Program(path) {
+      const configId = path.scope.generateUidIdentifier();
+      path.pushContainer("body", [
         t.variableDeclaration("const", [
           t.variableDeclarator(configId, t.arrayExpression())
         ]),
         t.exportDefaultDeclaration(configId)
       ]);
-      const configDefinition = path2.get("body.0");
+      const configDefinition = path.get("body.0");
       const configsArray = configDefinition.get(
         "declarations.0.init"
       );
       for (const page of pages) {
-        (0, import_traverse.default)(page.ast, pageVisitor(page.path, path2, configsArray));
+        traverse(page.ast, pageVisitor(page.path, path, configsArray));
       }
     }
   });
-  return (0, import_generator.default)(program2);
+  return build(program2);
 }
 
-// src/generate.ts
-var import_path = __toESM(require("path"));
-async function generate() {
-  const { code } = await getPagesConfig();
-  const dir = import_path.default.resolve(__dirname, "../", ".generate");
-  await import_promises2.default.mkdir(dir, { recursive: true });
-  await import_promises2.default.writeFile(import_path.default.join(dir, "data.js"), code, { encoding: "utf-8" });
-}
-generate();
+export {
+  getPagesConfig
+};
