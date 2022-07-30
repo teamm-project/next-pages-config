@@ -169,6 +169,18 @@ export async function getPagesConfig() {
 				"declarations.0.init"
 			) as NodePath<t.ArrayExpression>;
 
+			path.unshiftContainer(
+				"body",
+				t.importDeclaration(
+					[
+						t.importDefaultSpecifier(
+							t.identifier('React'),
+						),
+					],
+					t.stringLiteral('react')
+				)
+			)
+
 			for (const page of pages) {
 				traverse(page.ast, pageVisitor(page.path, path, configsArray));
 			}

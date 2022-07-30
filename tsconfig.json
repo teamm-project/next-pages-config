@@ -11,9 +11,10 @@
     "resolveJsonModule": true,
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
+    "jsx": "preserve",
     "paths": {
       "next-pages-config": ["./src/index.ts"],
-      "next-pages-config/data": ["./src/data.ts"]
+      "next-pages-config/data": ["src/data.ts"]
     }
   },
   "declarationMap": true,
